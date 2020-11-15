@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "invaders.h"
 
 void move_player(game *g, player_move move){
@@ -63,8 +64,9 @@ void move_enemies(game *g){
 				}
 			}
 
-			if(current->x < 1 || current->x > COLS-2){
+			if(current->x < 1){ // enemy has made it to the end
 				current->active = 0;
+				g->base_lives--;
 			}
 			current->y = MIN(MAX(1, current->y), ROWS-2);
 		}
@@ -119,3 +121,53 @@ void generate_enemy_bullets(game *g){
 	}
 }
 
+void check_collisions(game *g){
+	// for each bullet
+	for(int i = 0; i < MAX_BULLETS; i++){
+		if(g->bullets[i].active == 1){
+			bullet *current = &g->bullets[i];
+			int bullet_x = current->x;
+			int bullet_y = current->y;
+
+			// collision with enemy?
+			if(current->direction == B_RIGHT){ // no friendly fire
+				for(int i = 0; i < MAX_ENEMIES; i++){
+					if(g->enemies[i].active == 1){
+						int enemy_x = g->enemies[i].x;
+						int enemy_y = g->enemies[i].y;
+						if ((enemy_y == bullet_y) && (abs(enemy_x - bullet_x) <= current->b_speed / 2.0)){
+							
+							// deactivate bullet and enemy
+							g->enemies[i].active = 0;
+							current->active = 0;
+
+							// increment score
+							g->score += POINTS_PER_ENEMY;
+
+							break; // move onto next bullet
+						}
+					}
+				}
+			}
+			
+
+			// collision with player
+			int player_x = g->ship.x;
+			int player_y = g->ship.y;
+			
+			if(current->direction == B_LEFT){
+				if ((player_y == bullet_y) && (abs(bullet_x - player_x) <= current->b_speed / 2.0)){
+						
+					// deactivate bullet
+					current->active = 0;
+
+					// decrease lives
+					g->ship.lives--;
+				}
+			}
+
+		}
+	}
+
+	// for each ship
+}

@@ -17,9 +17,9 @@ void ncurses_init(){
 
 player *player_init(){
 	player *obj = malloc(sizeof(player));
-	// printf("%d", sizeof(player));
 	obj->x = 3;
 	obj->y = ROWS/2 - 1;
+	obj->lives = PLAYER_LIVES;
 	return obj;
 }
 
@@ -30,6 +30,7 @@ game *game_init(){
 	obj->ship = *player_init();
 	obj->score = 0;
 	obj->n_frame = 0;
+	obj->base_lives = BASE_LIVES;
 	for (int i = 0; i < MAX_BULLETS; i++){
 		obj->bullets[i].active = 0;
 	}
@@ -42,6 +43,14 @@ game *game_init(){
 void display_board(WINDOW *w, game *g){
 	wclear(w);
 	box(w, 0, 0);
+	wmove(w, ROWS/2 - 2, 0);
+	wprintw(w, "B");
+	wmove(w, ROWS/2 - 1, 0);
+	wprintw(w, "A");
+	wmove(w, ROWS/2, 0);
+	wprintw(w, "S");
+	wmove(w, ROWS/2 + 1, 0);
+	wprintw(w, "E");
 
 	// display player
 	player ship = g->ship;
@@ -79,6 +88,10 @@ void display_board(WINDOW *w, game *g){
 void display_score(WINDOW *w, game *g){
 	wclear(w);
 	wprintw(w, " Score: %d", g->score);
+	wmove(w, 1, 0);
+	wprintw(w, " Ship Lives: %d", g->ship.lives);
+	wmove(w, 2, 0);
+	wprintw(w, " Base Lives: %d", g->base_lives);
 	wnoutrefresh(w);
 }
 
@@ -99,18 +112,23 @@ int main(){
 	while(running){
 		display_board(board, g);
 		display_score(score, g);
+
+		//is game over?
+		if(g->ship.lives <= 0 || g->base_lives <= 0){
+			running = false;
+		}
+
 		doupdate();
 		sleep_milli(FRAME_RATE);
 
-		// advance bullets [2]
+		// advance bullets 
 		move_bullets(g);
 
-		// calculate collisions
-		
+		// calculate collisions 
+		check_collisions(g);
 
-		// advance enemies [3]
+		// advance enemies 
 		move_enemies(g);
-
 
 		// generate enemies
 		if(g->n_frame % ENEMY_GEN_RATE == 0){
@@ -120,10 +138,10 @@ int main(){
 				ENEMY_PERIOD,g->n_frame);
 		}
 
-		// generate bullets... [4]
+		// generate bullets
 		generate_enemy_bullets(g);
 		
-		// see how player wants to move [1]
+		// see how player wants to move 
 		switch(getch()){
 			case KEY_UP:
 				move = UP;
@@ -152,6 +170,15 @@ int main(){
 		g->n_frame++;
 
 	}
+
+	// show game over scren:
+	wclear(board);
+	wmove(board, 0, 0);
+	wprintw(board, "Game over.");
+	wnoutrefresh(board);
+	doupdate();
+	sleep(1);
+
 
 	wclear(stdscr);
 	endwin();
