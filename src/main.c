@@ -29,9 +29,12 @@ game *game_init(){
 	obj->cols = COLS;
 	obj->ship = *player_init();
 	obj->score = 0;
+	obj->n_frame = 0;
 	for (int i = 0; i < MAX_BULLETS; i++){
 		obj->bullets[i].active = 0;
-		obj->bullets[i].direction = B_RIGHT;
+	}
+	for (int j = 0; j < MAX_ENEMIES; j++){
+		obj->enemies[j].active = 0;
 	}
 	return obj;
 }
@@ -39,12 +42,11 @@ game *game_init(){
 void display_board(WINDOW *w, game *g){
 	wclear(w);
 	box(w, 0, 0);
+
 	// display player
 	player ship = g->ship;
 	wmove(w, ship.y, ship.x);
 	wprintw(w, PLAYER_CHAR);
-
-	// display enemies
 
 	// display bullets
 	for(int i = 0; i < MAX_BULLETS; i++){
@@ -57,8 +59,16 @@ void display_board(WINDOW *w, game *g){
 				wprintw(w, LEFT_BULLET);
 			case B_RIGHT:
 				wprintw(w, RIGHT_BULLET);
-
 		}
+	}
+
+	// display enemies
+	for(int i = 0; i < MAX_ENEMIES; i++){
+		if(g->enemies[i].active == 0){
+			continue;
+		}
+		wmove(w, g->enemies[i].y, g->enemies[i].x);
+		wprintw(w, ENEMY_CHAR);
 	}
 
 	wnoutrefresh(w);
@@ -76,6 +86,8 @@ int main(){
 	player_move move = NONE;
 	bool running = true;
 
+	srand(time(NULL));
+
 	ncurses_init();
 	g = game_init();
 
@@ -92,8 +104,21 @@ int main(){
 		move_bullets(g);
 
 		// calculate collisions
+		
+
 		// advance enemies [3]
-		// generate enemies/bullets...
+		move_enemies(g);
+
+
+		// generate enemies
+		if(g->n_frame % ENEMY_GEN_RATE == 0){
+			int enemy_y = rand() % (ROWS - 2) + 1;
+			create_enemy(g, COLS-2, enemy_y, ENEMY_BULLET_RATE, 
+				ENEMY_BULLET_SPEED, ENEMY_X_SPEED);
+		}
+
+		// generate bullets... [4]
+		generate_enemy_bullets(g);
 		
 		// see how player wants to move [1]
 		switch(getch()){
@@ -120,6 +145,8 @@ int main(){
 		}
 
 		move_player(g, move);
+
+		g->n_frame++;
 
 	}
 

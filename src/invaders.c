@@ -31,12 +31,24 @@ void move_bullets(game *g){
 			bullet *current = &g->bullets[i];
 			switch(current->direction){
 				case B_LEFT:
-					current->x--;
+					current->x -= current->b_speed;
 					break;
 				case B_RIGHT:
-					current->x++;
+					current->x += current->b_speed;
 					break;
 			}
+			if(current->x < 1 || current->x > COLS-2){
+				current->active = 0;
+			}
+		}
+	}
+}
+
+void move_enemies(game *g){
+	for(int i = 0; i < MAX_ENEMIES; i++){
+		if(g->enemies[i].active == 1){
+			enemy *current = &g->enemies[i];
+			current->x -= current->x_speed;
 			if(current->x < 1 || current->x > COLS-2){
 				current->active = 0;
 			}
@@ -58,7 +70,25 @@ void create_bullet(game *g, bullet_direction dir, int x, int y, int speed){
 			return;
 		}
 	}
-	
-	//TODO: is there a better system for this
+}
+
+void create_enemy(game *g, int x, int y, int b_rate, int b_speed, int x_speed){
+	for(int i = 0; i < MAX_ENEMIES; i++){
+		if(g->enemies[i].active == 0){
+			enemy *new_enemy = &g->enemies[i];
+
+			new_enemy->active = 1;
+			new_enemy->x = x;
+			new_enemy->y = y;
+			new_enemy->b_speed = b_speed;
+			new_enemy->b_rate = b_rate;
+			new_enemy->x_speed = x_speed;
+			return;
+		}
+	}
+}
+
+void generate_enemy_bullets(game *g){
 	
 }
+
