@@ -72,7 +72,7 @@ void create_bullet(game *g, bullet_direction dir, int x, int y, int speed){
 	}
 }
 
-void create_enemy(game *g, int x, int y, int b_rate, int b_speed, int x_speed){
+void create_enemy(game *g, int x, int y, int b_rate, int b_speed, int x_speed, int birth_frame){
 	for(int i = 0; i < MAX_ENEMIES; i++){
 		if(g->enemies[i].active == 0){
 			enemy *new_enemy = &g->enemies[i];
@@ -83,12 +83,22 @@ void create_enemy(game *g, int x, int y, int b_rate, int b_speed, int x_speed){
 			new_enemy->b_speed = b_speed;
 			new_enemy->b_rate = b_rate;
 			new_enemy->x_speed = x_speed;
+			new_enemy->birth_frame = birth_frame;
 			return;
 		}
 	}
 }
 
 void generate_enemy_bullets(game *g){
-	
+	for(int i = 0; i < MAX_ENEMIES; i++){
+		if(g->enemies[i].active == 1){
+			enemy *this_enemy = &g->enemies[i];
+			int enemy_age = g->n_frame - this_enemy->birth_frame;
+			if(enemy_age % this_enemy->b_rate == 0){
+				create_bullet(g, B_LEFT, this_enemy->x - 1,
+					this_enemy->y, ENEMY_BULLET_SPEED);
+			}
+		}
+	}
 }
 

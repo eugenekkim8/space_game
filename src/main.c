@@ -57,8 +57,10 @@ void display_board(WINDOW *w, game *g){
 		switch(g->bullets[i].direction){
 			case B_LEFT:
 				wprintw(w, LEFT_BULLET);
+				break;
 			case B_RIGHT:
 				wprintw(w, RIGHT_BULLET);
+				break;
 		}
 	}
 
@@ -114,7 +116,7 @@ int main(){
 		if(g->n_frame % ENEMY_GEN_RATE == 0){
 			int enemy_y = rand() % (ROWS - 2) + 1;
 			create_enemy(g, COLS-2, enemy_y, ENEMY_BULLET_RATE, 
-				ENEMY_BULLET_SPEED, ENEMY_X_SPEED);
+				ENEMY_BULLET_SPEED, ENEMY_X_SPEED, g->n_frame);
 		}
 
 		// generate bullets... [4]
