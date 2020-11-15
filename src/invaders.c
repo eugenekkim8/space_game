@@ -124,6 +124,9 @@ void generate_enemy_bullets(game *g){
 }
 
 void check_collisions(game *g){
+	int player_x = g->ship.x;
+	int player_y = g->ship.y;
+
 	// for each bullet
 	for(int i = 0; i < MAX_BULLETS; i++){
 		if(g->bullets[i].active == 1){
@@ -155,9 +158,6 @@ void check_collisions(game *g){
 			
 
 			// collision with player
-			int player_x = g->ship.x;
-			int player_y = g->ship.y;
-			
 			if(current->direction == B_LEFT){
 				if ((player_y == bullet_y) && (abs(bullet_x - player_x) <= current->b_speed / 2.0)){
 						
@@ -172,5 +172,20 @@ void check_collisions(game *g){
 		}
 	}
 
-	// for each ship
+	// for each enemy
+	for(int i = 0; i < MAX_ENEMIES; i++){
+		if(g->enemies[i].active == 1){
+			int enemy_x = g->enemies[i].x;
+			int enemy_y = g->enemies[i].y;
+			if ((enemy_y == player_y) && (abs(enemy_x - player_x) <= 
+				(g->enemies[i].x_speed) / 2.0)){
+				
+				// deactivate enemy
+				g->enemies[i].active = 0;
+				
+				//decrease lives
+				g->ship.lives--;
+			}
+		}
+	}
 }
