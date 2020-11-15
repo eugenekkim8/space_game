@@ -6,6 +6,14 @@
 #include "invaders.h"
 #include "util.h"
 
+int ENEMY_GEN_RATE[MAX_LEVEL]		= 	{ 30, 20, 30, 15, 20, 20};
+int ENEMY_BULLET_SPEED[MAX_LEVEL]	= 	{ 2 , 2 , 2 , 4 , 2 , 3 };
+int ENEMY_BULLET_RATE[MAX_LEVEL]	= 	{ 72, 36, 72, 72, 24, 18};
+int ENEMY_X_SPEED[MAX_LEVEL]		= 	{ 1 , 1 , 1 , 2 , 1 , 1 };
+int ENEMY_Y_RATE[MAX_LEVEL]			= 	{ 20, 20, 20, 20, 20, 10};
+int ENEMY_PERIOD[MAX_LEVEL]			= 	{ 0 , 0 , 2 , 0 , 0 , 3 };
+char ENEMY_SYMBOL[MAX_LEVEL]		=	{'K','#','X','G','M','*'};
+
 void ncurses_init(){
 	initscr();
 	cbreak();				// pass key presses, not signals
@@ -30,6 +38,7 @@ game *game_init(){
 	obj->ship = *player_init();
 	obj->score = 0;
 	obj->n_frame = 0;
+	obj->level = 1;
 	obj->base_lives = BASE_LIVES;
 	for (int i = 0; i < MAX_BULLETS; i++){
 		obj->bullets[i].active = 0;
@@ -79,7 +88,7 @@ void display_board(WINDOW *w, game *g){
 			continue;
 		}
 		wmove(w, g->enemies[i].y, g->enemies[i].x);
-		wprintw(w, ENEMY_CHAR);
+		wprintw(w, &g->enemies[i].symbol);
 	}
 
 	wnoutrefresh(w);
@@ -89,8 +98,10 @@ void display_score(WINDOW *w, game *g){
 	wclear(w);
 	wprintw(w, " Score: %d", g->score);
 	wmove(w, 1, 0);
+	wprintw(w, " Level: %d", g->level);
+	wmove(w, 0, 18);
 	wprintw(w, " Ship Lives: %d", g->ship.lives);
-	wmove(w, 2, 0);
+	wmove(w, 1, 18);
 	wprintw(w, " Base Lives: %d", g->base_lives);
 	wnoutrefresh(w);
 }
@@ -107,7 +118,7 @@ int main(){
 	g = game_init();
 
 	board = newwin(g->rows, g->cols, 0, 0);
-	score = newwin(3, 24, g->rows + 1, 0);
+	score = newwin(4, 36, g->rows + 1, 0);
 
 	while(running){
 		display_board(board, g);
@@ -131,11 +142,13 @@ int main(){
 		move_enemies(g);
 
 		// generate enemies
-		if(g->n_frame % ENEMY_GEN_RATE == 0){
+		int this_level = g->level;
+		if(g->n_frame % ENEMY_GEN_RATE[this_level-1] == 0){
 			int enemy_y = rand() % (ROWS - 2) + 1;
-			create_enemy(g, COLS-2, enemy_y, ENEMY_BULLET_RATE, 
-				ENEMY_BULLET_SPEED, ENEMY_X_SPEED, ENEMY_Y_RATE,
-				ENEMY_PERIOD,g->n_frame);
+			create_enemy(g, COLS-2, enemy_y, ENEMY_BULLET_RATE[this_level-1], 
+				ENEMY_BULLET_SPEED[this_level-1], ENEMY_X_SPEED[this_level-1], 
+				ENEMY_Y_RATE[this_level-1], ENEMY_PERIOD[this_level-1], 
+				ENEMY_SYMBOL[this_level-1], g->n_frame);
 		}
 
 		// generate bullets
@@ -166,6 +179,11 @@ int main(){
 		}
 
 		move_player(g, move);
+
+		// advance level?
+		if(g->score > g->level * POINTS_PER_LEVEL){
+			g->level = MIN(g->level + 1, MAX_LEVEL);
+		}
 
 		g->n_frame++;
 

@@ -89,7 +89,8 @@ void create_bullet(game *g, bullet_direction dir, int x, int y, int speed){
 	}
 }
 
-void create_enemy(game *g, int x, int y, int b_rate, int b_speed, int x_speed, int y_rate, int period, int birth_frame){
+void create_enemy(game *g, int x, int y, int b_rate, int b_speed, int x_speed, int y_rate, 
+	int period, char symbol, int birth_frame){
 	for(int i = 0; i < MAX_ENEMIES; i++){
 		if(g->enemies[i].active == 0){
 			enemy *new_enemy = &g->enemies[i];
@@ -102,6 +103,7 @@ void create_enemy(game *g, int x, int y, int b_rate, int b_speed, int x_speed, i
 			new_enemy->x_speed = x_speed;
 			new_enemy->y_rate = y_rate;
 			new_enemy->period = period;
+			new_enemy->symbol = symbol;
 			new_enemy->birth_frame = birth_frame;
 			return;
 		}
@@ -115,7 +117,7 @@ void generate_enemy_bullets(game *g){
 			int enemy_age = g->n_frame - this_enemy->birth_frame;
 			if(enemy_age % this_enemy->b_rate == 0){
 				create_bullet(g, B_LEFT, this_enemy->x - 1,
-					this_enemy->y, ENEMY_BULLET_SPEED);
+					this_enemy->y, ENEMY_BULLET_SPEED[g->level-1]);
 			}
 		}
 	}
@@ -135,7 +137,8 @@ void check_collisions(game *g){
 					if(g->enemies[i].active == 1){
 						int enemy_x = g->enemies[i].x;
 						int enemy_y = g->enemies[i].y;
-						if ((enemy_y == bullet_y) && (abs(enemy_x - bullet_x) <= current->b_speed / 2.0)){
+						if ((enemy_y == bullet_y) && (abs(enemy_x - bullet_x) <= 
+							(current->b_speed + g->enemies[i].x_speed) / 2.0)){
 							
 							// deactivate bullet and enemy
 							g->enemies[i].active = 0;
