@@ -6,7 +6,7 @@
 #include "invaders.h"
 #include "util.h"
 
-int ENEMY_GEN_RATE[MAX_LEVEL]		= 	{ 30, 20, 30, 15, 20, 20};
+int ENEMY_GEN_RATE[MAX_LEVEL]		= 	{ 30, 20, 30, 20, 20, 20};
 int ENEMY_BULLET_SPEED[MAX_LEVEL]	= 	{ 2 , 2 , 2 , 4 , 2 , 3 };
 int ENEMY_BULLET_RATE[MAX_LEVEL]	= 	{ 72, 36, 72, 72, 24, 18};
 int ENEMY_X_SPEED[MAX_LEVEL]		= 	{ 1 , 1 , 1 , 2 , 1 , 1 };
@@ -100,9 +100,13 @@ void display_score(WINDOW *w, game *g){
 	wmove(w, 1, 0);
 	wprintw(w, " Level: %d", g->level);
 	wmove(w, 0, 18);
-	wprintw(w, " Ship Lives: %d", g->ship.lives);
+	wprintw(w, " Ship Lives: (%02d) ", g->ship.lives);
+	for(int i = 0; i < g->ship.lives; i++)
+		waddch(w, 'X');
 	wmove(w, 1, 18);
-	wprintw(w, " Base Lives: %d", g->base_lives);
+	wprintw(w, " Base Lives: (%02d) ", g->base_lives);
+	for(int i = 0; i < g->base_lives; i++)
+		waddch(w, 'X');
 	wnoutrefresh(w);
 }
 
@@ -118,7 +122,7 @@ int main(){
 	g = game_init();
 
 	board = newwin(g->rows, g->cols, 0, 0);
-	score = newwin(4, 36, g->rows + 1, 0);
+	score = newwin(4, g->cols, g->rows + 1, 0);
 
 	while(running){
 		display_board(board, g);

@@ -26,7 +26,7 @@
 #define ENEMY_SYMBOL "K"*/
 
 #define POINTS_PER_ENEMY 10
-#define POINTS_PER_LEVEL 50
+#define POINTS_PER_LEVEL 100
 #define MAX_LEVEL 6
 
 #define PLAYER_CHAR "E"
