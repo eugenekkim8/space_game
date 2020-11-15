@@ -49,9 +49,21 @@ void move_enemies(game *g){
 		if(g->enemies[i].active == 1){
 			enemy *current = &g->enemies[i];
 			current->x -= current->x_speed;
+			
+			// creating vertical oscillation behavior
+			if(current->period != 0){
+				int enemy_age = g->n_frame - current->birth_frame;
+				int direction = -1; // default move down
+				if(enemy_age % (4 * current->period) < 2 * current->period){
+					direction = 1; // move up
+				}
+				current->y -= current->y_speed * direction;
+			}
+
 			if(current->x < 1 || current->x > COLS-2){
 				current->active = 0;
 			}
+			current->y = MIN(MAX(1, current->y), ROWS-2);
 		}
 	}
 }
@@ -72,7 +84,7 @@ void create_bullet(game *g, bullet_direction dir, int x, int y, int speed){
 	}
 }
 
-void create_enemy(game *g, int x, int y, int b_rate, int b_speed, int x_speed, int birth_frame){
+void create_enemy(game *g, int x, int y, int b_rate, int b_speed, int x_speed, int y_speed, int period, int birth_frame){
 	for(int i = 0; i < MAX_ENEMIES; i++){
 		if(g->enemies[i].active == 0){
 			enemy *new_enemy = &g->enemies[i];
@@ -83,6 +95,8 @@ void create_enemy(game *g, int x, int y, int b_rate, int b_speed, int x_speed, i
 			new_enemy->b_speed = b_speed;
 			new_enemy->b_rate = b_rate;
 			new_enemy->x_speed = x_speed;
+			new_enemy->y_speed = y_speed;
+			new_enemy->period = period;
 			new_enemy->birth_frame = birth_frame;
 			return;
 		}
