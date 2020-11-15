@@ -116,7 +116,7 @@ int main(){
 		if(g->n_frame % ENEMY_GEN_RATE == 0){
 			int enemy_y = rand() % (ROWS - 2) + 1;
 			create_enemy(g, COLS-2, enemy_y, ENEMY_BULLET_RATE, 
-				ENEMY_BULLET_SPEED, ENEMY_X_SPEED, ENEMY_Y_SPEED,
+				ENEMY_BULLET_SPEED, ENEMY_X_SPEED, ENEMY_Y_RATE,
 				ENEMY_PERIOD,g->n_frame);
 		}
 

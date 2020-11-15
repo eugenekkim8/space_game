@@ -18,8 +18,8 @@
 #define ENEMY_BULLET_SPEED 2
 #define ENEMY_BULLET_RATE 30 // number of frames
 #define ENEMY_X_SPEED 1
-#define ENEMY_Y_SPEED 1
-#define ENEMY_PERIOD 0
+#define ENEMY_Y_RATE 25 // number of frames
+#define ENEMY_PERIOD 1
 
 
 #define PLAYER_CHAR "E"
@@ -52,7 +52,7 @@ typedef struct{
 	int b_rate;
 	int b_speed;
 	int x_speed; 
-	int y_speed;
+	int y_rate;
 	int period;
 	int birth_frame;
 } enemy;
@@ -70,7 +70,7 @@ void move_player(game *g, player_move move);
 void move_bullets(game *g);
 void move_enemies(game *g);
 void create_bullet(game *g, bullet_direction dir, int x, int y, int speed);
-void create_enemy(game *g, int x, int y, int b_rate, int b_speed, int x_speed, int y_speed, int period, int birth_frame);
+void create_enemy(game *g, int x, int y, int b_rate, int b_speed, int x_speed, int y_rate, int period, int birth_frame);
 void generate_enemy_bullets(game *g);
 
 
