@@ -6,12 +6,13 @@
 #include "invaders.h"
 #include "util.h"
 
+							//level #:	  1,  2,  3,  4,  5,  6 
 int ENEMY_GEN_RATE[MAX_LEVEL]		= 	{ 30, 20, 30, 20, 20, 20};
-int ENEMY_BULLET_SPEED[MAX_LEVEL]	= 	{ 2 , 2 , 2 , 4 , 2 , 3 };
+int ENEMY_BULLET_SPEED[MAX_LEVEL]	= 	{ 2 , 2 , 2 , 4 , 2 , 4 };
 int ENEMY_BULLET_RATE[MAX_LEVEL]	= 	{ 72, 36, 72, 72, 24, 18};
 int ENEMY_X_SPEED[MAX_LEVEL]		= 	{ 1 , 1 , 1 , 2 , 1 , 1 };
 int ENEMY_Y_RATE[MAX_LEVEL]			= 	{ 20, 20, 20, 20, 20, 10};
-int ENEMY_PERIOD[MAX_LEVEL]			= 	{ 0 , 0 , 2 , 0 , 0 , 3 };
+int ENEMY_PERIOD[MAX_LEVEL]			= 	{ 0 , 0 , 2 , 0 , 0 , 2 };
 char ENEMY_SYMBOL[MAX_LEVEL]		=	{'K','#','X','G','M','*'};
 
 void ncurses_init(){
@@ -144,7 +145,7 @@ void intro_screen(){
 	move(10, 1);
 	printw("Defend your base against invaders! Press any key to begin.");
 	move(11, 1);
-	printw("Bullets hurt you, but not the base.");
+	printw("Bullets hurt your ship, but not the base.");
 	move(13, 1);
 	printw("Directions once started:");
 	move(14, 1);
@@ -256,14 +257,20 @@ int main(){
 			wmove(board, 1, 1);
 			wprintw(board, "Game over.");
 			wmove(board, 2, 1);
-			wprintw(board, "Press q to quit, or any other key to play again.");
+			wprintw(board, "Press q to quit, or p to play again.");
 			wnoutrefresh(board);
 			doupdate();
 			timeout(-1);
-			if(getch() != 'q'){
-				g = game_init();
-				timeout(0);
-				running = true;
+			while(1){
+				char x = getch();
+				if(x == 'p'){
+					g = game_init();
+					timeout(0);
+					running = true;
+					break;
+				} else if(x == 'q'){
+					break;
+				}
 			} 
 		}
 	}
