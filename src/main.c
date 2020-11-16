@@ -143,15 +143,17 @@ void intro_screen(){
 	printw("by Eugene Kim, 11-15-2020, written in C");
 	move(10, 1);
 	printw("Defend your base against invaders! Press any key to begin.");
-	move(12, 1);
-	printw("Directions once started:");
+	move(11, 1);
+	printw("Bullets hurt you, but not the base.");
 	move(13, 1);
-	printw("ARROW KEYS = move ship");
+	printw("Directions once started:");
 	move(14, 1);
-	printw("SPACE      = shoot");
+	printw("ARROW KEYS = move ship");
 	move(15, 1);
-	printw("p          = pause");
+	printw("SPACE      = shoot");
 	move(16, 1);
+	printw("p          = pause");
+	move(17, 1);
 	printw("q          = quit");
 
 	timeout(-1);
