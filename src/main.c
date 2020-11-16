@@ -123,47 +123,17 @@ void game_pause(WINDOW *w){
 	if(getch()){
 		timeout(0);
 	} 
-
 }
 
 void intro_screen(){
 	// "Space Game" logo
-	move(1, 1);
-	printw("________                               _________                       ");
-	move(2, 1);
-	printw("__  ___/_____________ ___________      __  ____/_____ _______ ________ ");
-	move(3, 1);
-	printw("_____ \\___  __ \\  __ `/  ___/  _ \\     _  / __ _  __ `/_  __ `__ \\  _ \\");
-	move(4, 1);
-	printw("____/ /__  /_/ / /_/ // /__ /  __/     / /_/ / / /_/ /_  / / / / /  __/");
-	move(5, 1);
-	printw("/____/ _  .___/\\__,_/ \\___/ \\___/      \\____/  \\__,_/ /_/ /_/ /_/\\___/ ");
-	move(6, 1);
-	printw("       /_/                                                             ");                              
-	move(8, 1);
-	printw("by Eugene Kim, 11-15-2020, written in C");
-	move(10, 1);
-	printw("Defend your base against invaders! Press any key to begin.");
-	move(11, 1);
-	printw("Bullets hurt your ship, but not the base.");
-	move(13, 1);
-	printw("Directions once started:");
-	move(14, 1);
-	printw("ARROW KEYS = move ship");
-	move(15, 1);
-	printw("SPACE      = shoot");
-	move(16, 1);
-	printw("p          = pause");
-	move(17, 1);
-	printw("q          = quit");
-
+	mv_print_file("assets/intro.txt", 1, 1);                           
 	timeout(-1);
 	if(getch()){
 		timeout(0);
 		clear();
 		refresh();
-	} 
-
+	}
 }
 
 int main(){

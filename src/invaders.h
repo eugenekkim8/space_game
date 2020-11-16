@@ -17,14 +17,6 @@
 
 #define PLAYER_BULLET_SPEED 2
 
-/*#define ENEMY_GEN_RATE 30 // number of frames
-#define ENEMY_BULLET_SPEED 2
-#define ENEMY_BULLET_RATE 72// number of frames
-#define ENEMY_X_SPEED 1
-#define ENEMY_Y_RATE 20 // number of frames
-#define ENEMY_PERIOD 0
-#define ENEMY_SYMBOL "K"*/
-
 #define POINTS_PER_ENEMY 10
 #define POINTS_PER_LEVEL 200
 #define MAX_LEVEL 6
@@ -66,6 +58,14 @@ typedef struct{
 } enemy;
 
 typedef struct {
+	int active;
+	int x, y;
+	int x_rate;
+	int lives;
+	int height; 
+} boss;
+
+typedef struct {
 	int rows, cols;
 	int score;
 	player ship;
@@ -92,5 +92,7 @@ void create_enemy(game *g, int x, int y, int b_rate, int b_speed, int x_speed, i
 void generate_enemy_bullets(game *g);
 void check_collisions(game *g);
 
+void mv_print_file(char* file_loc, int x, int y);
+void mv_wprint_file(WINDOW *w, char* file_loc, int x, int y);
 
 #endif
