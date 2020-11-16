@@ -110,6 +110,59 @@ void display_score(WINDOW *w, game *g){
 	wnoutrefresh(w);
 }
 
+void game_pause(WINDOW *w){
+	wclear(w);
+	wmove(w, 1, 1);
+	wprintw(w, "Game paused.");
+	wmove(w, 2, 1);
+	wprintw(w, "Press any key to resume.");
+	wnoutrefresh(w);
+	doupdate();
+	timeout(-1);
+	if(getch()){
+		timeout(0);
+	} 
+
+}
+
+void intro_screen(){
+	// "Space Game" logo
+	move(1, 1);
+	printw("________                               _________                       ");
+	move(2, 1);
+	printw("__  ___/_____________ ___________      __  ____/_____ _______ ________ ");
+	move(3, 1);
+	printw("_____ \\___  __ \\  __ `/  ___/  _ \\     _  / __ _  __ `/_  __ `__ \\  _ \\");
+	move(4, 1);
+	printw("____/ /__  /_/ / /_/ // /__ /  __/     / /_/ / / /_/ /_  / / / / /  __/");
+	move(5, 1);
+	printw("/____/ _  .___/\\__,_/ \\___/ \\___/      \\____/  \\__,_/ /_/ /_/ /_/\\___/ ");
+	move(6, 1);
+	printw("       /_/                                                             ");                              
+	move(8, 1);
+	printw("by Eugene Kim, 11-15-2020, written in C");
+	move(10, 1);
+	printw("Defend your base against invaders! Press any key to begin.");
+	move(12, 1);
+	printw("Directions once started:");
+	move(13, 1);
+	printw("ARROW KEYS = move ship");
+	move(14, 1);
+	printw("SPACE      = shoot");
+	move(15, 1);
+	printw("p          = pause");
+	move(16, 1);
+	printw("q          = quit");
+
+	timeout(-1);
+	if(getch()){
+		timeout(0);
+		clear();
+		refresh();
+	} 
+
+}
+
 int main(){
 	game *g;
 	WINDOW *board, *score;
@@ -119,6 +172,8 @@ int main(){
 	srand(time(NULL));
 
 	ncurses_init();
+	intro_screen();
+
 	g = game_init();
 
 	board = newwin(g->rows, g->cols, 0, 0);
@@ -175,6 +230,8 @@ int main(){
 			case 'q':
 				running = false;
 				break;
+			case 'p':
+				game_pause(board);
 			case ' ':
 				create_bullet(g, B_RIGHT, g->ship.x + 1, g->ship.y, PLAYER_BULLET_SPEED);
 				break;
@@ -191,16 +248,23 @@ int main(){
 
 		g->n_frame++;
 
+		// display game over screen
+		if(!running){
+			wclear(board);
+			wmove(board, 1, 1);
+			wprintw(board, "Game over.");
+			wmove(board, 2, 1);
+			wprintw(board, "Press q to quit, or any other key to play again.");
+			wnoutrefresh(board);
+			doupdate();
+			timeout(-1);
+			if(getch() != 'q'){
+				g = game_init();
+				timeout(0);
+				running = true;
+			} 
+		}
 	}
-
-	// show game over scren:
-	wclear(board);
-	wmove(board, 0, 0);
-	wprintw(board, "Game over.");
-	wnoutrefresh(board);
-	doupdate();
-	sleep(1);
-
 
 	wclear(stdscr);
 	endwin();
