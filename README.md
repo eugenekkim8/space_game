@@ -15,7 +15,7 @@ Dependencies: `ncurses` (installed by default on most Macs)
 
 **Mac**
 1. Open Terminal: <kbd>cmd</kbd>+<kbd>space</kbd>, search "Terminal"
-2. Move to your preferred directory, e.g., `cd Downloads`
+2. Move to your preferred directory, e.g., run `cd Downloads`
 3. Run `git clone https://github.com/eugenekkim8/space_game.git`
 4. Run `cd space_game`
 5. Run `make`
