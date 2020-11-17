@@ -4,18 +4,18 @@
 #include <stdio.h>
 #include "invaders.h"
 
-void mv_print_file(char* file_loc, int x, int y){
+void mv_print_file(char* file_loc, int y, int x){
 	FILE *fp = fopen(file_loc, "r");
 	if(fp == NULL){
 		printf("Can't open %s\n", file_loc);
 	}
 	char c;
-	int row = x;
-	move(row, y); 
+	int row = y;
+	move(row, x); 
 	while((c = getc(fp)) != EOF){
 		if(c == '\n'){
 			row++;
-			move(row, y);
+			move(row, x);
 		} else{
 			addch(c);
 		}
@@ -23,20 +23,23 @@ void mv_print_file(char* file_loc, int x, int y){
 	fclose(fp);
 }
 
-void mv_wprint_file(WINDOW *w, char* file_loc, int x, int y){
+// cuts off strings to prevent wrapping
+void mv_wprint_file(WINDOW *w, char* file_loc, int y, int x){
 	FILE *fp = fopen(file_loc, "r");
 	if(fp == NULL){
 		printf("Can't open %s\n", file_loc);
 	}
 	char c;
-	int row = x;
-	move(row, y); 
+	int row = y;
+	int col = x; 
+	wmove(w, row, col); 
 	while((c = getc(fp)) != EOF){
 		if(c == '\n'){
 			row++;
-			wmove(w, row, y);
-		} else{
-			waddch(w, c);
+			col = x;
+		} else if (col <= COLS - 2){
+			mvwaddch(w, row, col, c);
+			col++;
 		}
 	}
 	fclose(fp);

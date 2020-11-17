@@ -1,6 +1,8 @@
 #ifndef INVADERS_H
 #define INVADERS_H
 
+#include <ncurses.h>
+
 #define MAX(X,Y) ((X) > (Y) ? (X) : (Y))
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
 
@@ -18,7 +20,8 @@
 #define PLAYER_BULLET_SPEED 2
 
 #define POINTS_PER_ENEMY 10
-#define POINTS_PER_LEVEL 200
+#define POINTS_PER_BIGENEMY 10
+#define POINTS_PER_LEVEL 50
 #define MAX_LEVEL 6
 
 #define PLAYER_CHAR "E"
@@ -63,7 +66,9 @@ typedef struct {
 	int x_rate;
 	int lives;
 	int height; 
-} boss;
+	char* file_loc;
+	int birth_frame;
+} bigenemy;
 
 typedef struct {
 	int rows, cols;
@@ -71,6 +76,7 @@ typedef struct {
 	player ship;
 	bullet bullets[MAX_BULLETS];
 	enemy enemies[MAX_ENEMIES];
+	bigenemy boss;  
 	int n_frame;
 	int base_lives;
 	int level;
@@ -84,6 +90,12 @@ extern int ENEMY_Y_RATE[MAX_LEVEL];
 extern int ENEMY_PERIOD[MAX_LEVEL];
 extern char ENEMY_SYMBOL[MAX_LEVEL];
 
+// -1 because boss occurs during level transitions
+extern int BOSS_X_RATE[MAX_LEVEL-1];
+extern int BOSS_LIVES[MAX_LEVEL-1];
+extern int BOSS_HEIGHT[MAX_LEVEL-1];
+extern char *BOSS_FILE_LOC[MAX_LEVEL-1];
+
 void move_player(game *g, player_move move);
 void move_bullets(game *g);
 void move_enemies(game *g);
@@ -92,7 +104,10 @@ void create_enemy(game *g, int x, int y, int b_rate, int b_speed, int x_speed, i
 void generate_enemy_bullets(game *g);
 void check_collisions(game *g);
 
-void mv_print_file(char* file_loc, int x, int y);
-void mv_wprint_file(WINDOW *w, char* file_loc, int x, int y);
+void mv_print_file(char* file_loc, int y, int x);
+void mv_wprint_file(WINDOW *w, char* file_loc, int y, int x);
+
+void create_boss(game *g);
+void move_boss(game *g);
 
 #endif

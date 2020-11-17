@@ -149,13 +149,26 @@ void check_collisions(game *g){
 
 							// increment score
 							g->score += POINTS_PER_ENEMY;
-
-							break; // move onto next bullet
 						}
 					}
 				}
 			}
-			
+
+			// collision with boss?
+			if(current->direction == B_RIGHT && g->boss.active == 1){
+				if((abs(g->boss.x - bullet_x) <= current->b_speed / 2.0) &&
+					((bullet_y >= g->boss.y) && (bullet_y <= g->boss.y + g->boss.height))){
+						// deactivate bullet, take one life off boss
+						current->active = 0;
+						g->boss.lives--;
+
+						// if boss is dead, deactivate and increment score
+						if(g->boss.lives <= 0){
+							g->boss.active = 0;
+							g->score += POINTS_PER_BIGENEMY;
+						}
+					}
+			}
 
 			// collision with player
 			if(current->direction == B_LEFT){
@@ -188,4 +201,19 @@ void check_collisions(game *g){
 			}
 		}
 	}
+
+	// for the boss
+	if(g->boss.active == 1){
+		if((abs(g->boss.x - player_x) <= 1) &&
+			((player_y >= g->boss.y) && (player_y <= g->boss.y + g->boss.height))){
+
+			// deactivate enemy
+			g->boss.active = 0;
+
+			// decrease player lives by boss lives
+			g->ship.lives -= g->boss.lives;
+		}
+
+	}
+
 }
