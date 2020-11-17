@@ -15,14 +15,15 @@ Dependencies: `ncurses`
 
 **Mac**
 1. Open Terminal: <kbd>cmd</kbd>+<kbd>space</kbd>, search "Terminal"
-2. Run `git clone https://github.com/eugenekkim8/space_game.git`
-3. Run `cd space_game`
-4. Run `make`
-5. Run `bin/release/main` to launch.
-6. To uninstall, run `cd -` and then `rm -r space_game` (accepting any overrides).
+2. Run `cd Downloads'
+3. Run `git clone https://github.com/eugenekkim8/space_game.git`
+4. Run `cd space_game`
+5. Run `make`
+6. Run `bin/release/main` to launch.
+7. To uninstall, run `cd -` and then `rm -r space_game` (accepting any overrides).
 
 **Windows**
 
-A lot harder, unfortunately. Consider installing Cygwin with packages `git`, `gcc`, `make`, and `ncurses` and following the Mac instructions above.
+A lot harder, unfortunately. Try installing Cygwin with packages `git`, `gcc`, `make`, and `ncurses` and following the Mac instructions above.
 
 This game has not been tested on Windows. 
