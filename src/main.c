@@ -1,3 +1,4 @@
+#include <math.h>
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,6 +33,12 @@ player *player_init(){
 	return obj;
 }
 
+bigenemy *boss_init(){
+	bigenemy *obj = malloc(sizeof(bigenemy));
+	obj->file_loc = malloc(50);
+	return obj;
+}
+
 game *game_init(){
 	game *obj = malloc(sizeof(game));
 	obj->rows = ROWS;
@@ -47,6 +54,7 @@ game *game_init(){
 	for (int j = 0; j < MAX_ENEMIES; j++){
 		obj->enemies[j].active = 0;
 	}
+	obj->boss = *boss_init();
 	return obj;
 }
 
@@ -66,6 +74,12 @@ void display_board(WINDOW *w, game *g){
 	player ship = g->ship;
 	wmove(w, ship.y, ship.x);
 	wprintw(w, PLAYER_CHAR);
+
+	// display boss, if any
+	bigenemy bs = g->boss;
+	if(bs.active == 1){
+		mv_wprint_file(w, bs.file_loc, bs.y, bs.x);
+	}
 
 	// display bullets
 	for(int i = 0; i < MAX_BULLETS; i++){
@@ -101,13 +115,22 @@ void display_score(WINDOW *w, game *g){
 	wmove(w, 1, 0);
 	wprintw(w, " Level: %d", g->level);
 	wmove(w, 0, 18);
-	wprintw(w, " Ship Lives: (%02d) ", g->ship.lives);
+	wprintw(w, " Ship Lives: (%02d) ", MAX(g->ship.lives, 0));
 	for(int i = 0; i < g->ship.lives; i++)
 		waddch(w, 'X');
 	wmove(w, 1, 18);
-	wprintw(w, " Base Lives: (%02d) ", g->base_lives);
+	wprintw(w, " Base Lives: (%02d) ", MAX(g->base_lives, 0));
 	for(int i = 0; i < g->base_lives; i++)
 		waddch(w, 'X');
+	// display boss lives if active
+	if(g->boss.active == 1){
+		wmove(w, 3, 18);
+		wprintw(w, " Boss Lives: (%02d) ", g->boss.lives);
+		for(int i = 0; i < floor(g->boss.lives / 10.0); i++)
+			waddch(w, '*');
+		for(int j = 0; j < g->boss.lives - 10 * floor(g->boss.lives / 10.0); j++)
+			waddch(w, 'X');
+	}
 	wnoutrefresh(w);
 }
 
@@ -123,47 +146,17 @@ void game_pause(WINDOW *w){
 	if(getch()){
 		timeout(0);
 	} 
-
 }
 
 void intro_screen(){
 	// "Space Game" logo
-	move(1, 1);
-	printw("________                               _________                       ");
-	move(2, 1);
-	printw("__  ___/_____________ ___________      __  ____/_____ _______ ________ ");
-	move(3, 1);
-	printw("_____ \\___  __ \\  __ `/  ___/  _ \\     _  / __ _  __ `/_  __ `__ \\  _ \\");
-	move(4, 1);
-	printw("____/ /__  /_/ / /_/ // /__ /  __/     / /_/ / / /_/ /_  / / / / /  __/");
-	move(5, 1);
-	printw("/____/ _  .___/\\__,_/ \\___/ \\___/      \\____/  \\__,_/ /_/ /_/ /_/\\___/ ");
-	move(6, 1);
-	printw("       /_/                                                             ");                              
-	move(8, 1);
-	printw("by Eugene Kim, 11-15-2020, written in C");
-	move(10, 1);
-	printw("Defend your base against invaders! Press any key to begin.");
-	move(11, 1);
-	printw("Bullets hurt your ship, but not the base.");
-	move(13, 1);
-	printw("Directions once started:");
-	move(14, 1);
-	printw("ARROW KEYS = move ship");
-	move(15, 1);
-	printw("SPACE      = shoot");
-	move(16, 1);
-	printw("p          = pause");
-	move(17, 1);
-	printw("q          = quit");
-
+	mv_print_file("assets/intro.txt", 1, 2);                           
 	timeout(-1);
 	if(getch()){
 		timeout(0);
 		clear();
 		refresh();
-	} 
-
+	}
 }
 
 int main(){
@@ -203,6 +196,11 @@ int main(){
 		// advance enemies 
 		move_enemies(g);
 
+		// advance boss, if active
+		if(g->boss.active == 1){
+			move_boss(g);
+		}
+
 		// generate enemies
 		int this_level = g->level;
 		if(g->n_frame % ENEMY_GEN_RATE[this_level-1] == 0){
@@ -238,6 +236,10 @@ int main(){
 			case ' ':
 				create_bullet(g, B_RIGHT, g->ship.x + 1, g->ship.y, PLAYER_BULLET_SPEED);
 				break;
+			case 'n': // cheat code, for testing!
+				g->level++;
+				g->score+=POINTS_PER_LEVEL; 
+				break;
 			default:
 				move = NONE;
 		}
@@ -245,15 +247,15 @@ int main(){
 		move_player(g, move);
 
 		// advance level?
-		if(g->score > g->level * POINTS_PER_LEVEL){
-			g->level = MIN(g->level + 1, MAX_LEVEL);
+		if(g->score > g->level * POINTS_PER_LEVEL && g->level < MAX_LEVEL){
+			create_boss(g);
+			g->level++;
 		}
 
 		g->n_frame++;
 
 		// display game over screen
 		if(!running){
-			wclear(board);
 			wmove(board, 1, 1);
 			wprintw(board, "Game over.");
 			wmove(board, 2, 1);
