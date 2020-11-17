@@ -157,7 +157,7 @@ void check_collisions(game *g){
 			// collision with boss?
 			if(current->direction == B_RIGHT && g->boss.active == 1){
 				if((abs(g->boss.x - bullet_x) <= current->b_speed / 2.0) &&
-					((bullet_y >= g->boss.y) && (bullet_y <= g->boss.y + g->boss.height))){
+					((bullet_y >= g->boss.y) && (bullet_y <= g->boss.y + g->boss.height - 1))){
 						// deactivate bullet, take one life off boss
 						current->active = 0;
 						g->boss.lives--;
@@ -205,7 +205,7 @@ void check_collisions(game *g){
 	// for the boss
 	if(g->boss.active == 1){
 		if((abs(g->boss.x - player_x) <= 1) &&
-			((player_y >= g->boss.y) && (player_y <= g->boss.y + g->boss.height))){
+			((player_y >= g->boss.y) && (player_y <= g->boss.y + g->boss.height - 1))){
 
 			// deactivate enemy
 			g->boss.active = 0;
