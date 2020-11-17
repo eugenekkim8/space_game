@@ -5,10 +5,10 @@
 A space defense game written in C using NCURSES. Inspired by Space Impact, on the Nokia 3310 et seq.
 
 ## Directions
-* <kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd>: Move ship
-* <kbd>space</kbd>: Shoot
-* <kbd>p</kbd>: Pause
-* <kbd>q</kbd>: Quit
+* <kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> : Move ship
+* <kbd>space</kbd> : Shoot
+* <kbd>p</kbd> : Pause
+* <kbd>q</kbd> : Quit
 
 ## Installation
 Dependencies: `ncurses`
@@ -23,6 +23,6 @@ Dependencies: `ncurses`
 
 **Windows**
 
-Consider installing Cygwin and following the Mac instructions above.
+A lot harder, unfortunately. Consider installing Cygwin with packages `git`, `gcc`, `make`, and `ncurses` and following the Mac instructions above.
 
-Alternatively ...
+This game has not been tested on Windows. 
