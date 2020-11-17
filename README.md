@@ -16,8 +16,8 @@ Dependencies: `ncurses`
 **Mac**
 1. Open Terminal: <kbd>cmd</kbd>+<kbd>space</kbd>, search "Terminal"
 2. Run `git clone https://github.com/eugenekkim8/space_game.git`
-3. Run `make`
-4. Run `cd space_game`
+3. Run `cd space_game`
+4. Run `make`
 5. Run `bin/release/main` to launch.
 6. To uninstall, run `cd -` and then `rm -r space_game` (accepting any overrides).
 
