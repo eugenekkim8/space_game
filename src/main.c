@@ -233,6 +233,7 @@ int main(){
 				break;
 			case 'p':
 				game_pause(board);
+				break;
 			case ' ':
 				create_bullet(g, B_RIGHT, g->ship.x + 1, g->ship.y, PLAYER_BULLET_SPEED);
 				break;
