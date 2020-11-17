@@ -24,6 +24,6 @@ Dependencies: `ncurses`
 
 **Windows**
 
-A lot harder, unfortunately. Try installing Cygwin with packages `git`, `gcc`, `make`, and `ncurses` and following the Mac instructions above.
+A lot harder, unfortunately. Try installing [Cygwin](https://www.cygwin.com/) with packages `git`, `gcc`, `make`, and `ncurses` and following the Mac instructions above.
 
 This game has not been tested on Windows. 
