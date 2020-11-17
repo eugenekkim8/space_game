@@ -11,7 +11,7 @@ A space defense game written in C using NCURSES. Inspired by Space Impact, on th
 * <kbd>q</kbd> : Quit
 
 ## Installation
-Dependencies: `ncurses`
+Dependencies: `ncurses` (installed by default on most Macs)
 
 **Mac**
 1. Open Terminal: <kbd>cmd</kbd>+<kbd>space</kbd>, search "Terminal"
