@@ -15,7 +15,7 @@ Dependencies: `ncurses`
 
 **Mac**
 1. Open Terminal: <kbd>cmd</kbd>+<kbd>space</kbd>, search "Terminal"
-2. Run `cd Downloads`
+2. Move to your preferred directory, e.g. `cd Downloads`
 3. Run `git clone https://github.com/eugenekkim8/space_game.git`
 4. Run `cd space_game`
 5. Run `make`
@@ -24,6 +24,6 @@ Dependencies: `ncurses`
 
 **Windows**
 
-Try installing [Cygwin](https://www.cygwin.com/) with packages `git`, `gcc`, `make`, and `ncurses` and following the Mac instructions above.
+Install [Cygwin](https://www.cygwin.com/) with packages `git`, `gcc`, `make`, `ncurses` and `libncurses-devel` and following the Mac instructions above.
 
 This game has not been tested on Windows. 
