@@ -24,6 +24,6 @@ Dependencies: `ncurses` (installed by default on most Macs)
 
 **Windows**
 
-Install [Cygwin](https://www.cygwin.com/) with packages `git`, `gcc`, `make`, `ncurses` and `libncurses-devel` and following the Mac instructions above.
+Install [Cygwin](https://www.cygwin.com/) with packages `git`, `gcc`, `make`, `ncurses` and `libncurses-devel` and follow the Mac instructions above.
 
 This game has not been tested on Windows. 
