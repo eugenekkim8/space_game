@@ -29,60 +29,60 @@
 #define RIGHT_BULLET ">"
 
 typedef enum {
-	B_LEFT, B_RIGHT
+    B_LEFT, B_RIGHT
 } bullet_direction; 
 
 typedef enum {
-	UP, DOWN, LEFT, RIGHT, NONE
+    UP, DOWN, LEFT, RIGHT, NONE
 } player_move;
 
 typedef struct {
-	int x, y;
-	int lives;
+    int x, y;
+    int lives;
 } player;
 
 typedef struct {
-	bullet_direction direction;
-	int active; 	// 0 = inactive, 1 = active
-	int x, y;
-	int b_speed;
+    bullet_direction direction;
+    int active;     // 0 = inactive, 1 = active
+    int x, y;
+    int b_speed;
 } bullet;
 
 typedef struct{
-	int active;
-	int x, y;
-	int b_rate;
-	int b_speed;
-	int x_speed; 
-	int y_rate;
-	int period;
-	char symbol;
-	int birth_frame;
+    int active;
+    int x, y;
+    int b_rate;
+    int b_speed;
+    int x_speed; 
+    int y_rate;
+    int period;
+    char symbol;
+    int birth_frame;
 } enemy;
 
 typedef struct {
-	int active;
-	int x, y;
-	int x_rate;
-	int lives;
-	int height; 
-	char* file_loc;
-	int birth_frame;
+    int active;
+    int x, y;
+    int x_rate;
+    int lives;
+    int height; 
+    char* file_loc;
+    int birth_frame;
 } bigenemy;
 
 typedef struct {
-	int rows, cols;
-	int score;
-	player ship;
-	bullet bullets[MAX_BULLETS];
-	enemy enemies[MAX_ENEMIES];
-	bigenemy boss;  
-	int n_frame;
-	int base_lives;
-	int level;
+    int rows, cols;
+    int score;
+    player ship;
+    bullet bullets[MAX_BULLETS];
+    enemy enemies[MAX_ENEMIES];
+    bigenemy boss;  
+    int n_frame;
+    int base_lives;
+    int level;
 } game;
 
-extern int ENEMY_GEN_RATE[MAX_LEVEL]; 	
+extern int ENEMY_GEN_RATE[MAX_LEVEL];     
 extern int ENEMY_BULLET_SPEED[MAX_LEVEL];
 extern int ENEMY_BULLET_RATE[MAX_LEVEL];
 extern int ENEMY_X_SPEED[MAX_LEVEL];
