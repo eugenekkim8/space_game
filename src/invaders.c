@@ -149,9 +149,9 @@ void check_collisions(game *g){
 
     bullet* prev = g->root_b;
     bullet* current = g->root_b->next;
-    int deactivate = 0;
 
     while(current){
+        int deactivate = 0;
         int bullet_x = current->x;
         int bullet_y = current->y;
 
