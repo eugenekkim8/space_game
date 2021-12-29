@@ -99,6 +99,7 @@ extern int BOSS_HEIGHT[MAX_LEVEL-1];
 extern char *BOSS_FILE_LOC[MAX_LEVEL-1];
 
 void move_player(game *g, player_move move);
+void deactivate_all_bullets(bullet *root);
 void move_bullets(game *g);
 void move_enemies(game *g);
 void create_bullet(game *g, bullet_direction dir, int x, int y, int speed);

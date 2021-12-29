@@ -37,6 +37,14 @@ bullet *deactivate_bullet(bullet *prev, bullet *current){
     return current;
 }
 
+void deactivate_all_bullets(bullet *root){
+    bullet *prev = root;
+    bullet *current = root->next;
+    while(current != 0){
+        current = deactivate_bullet(prev, current);
+    }
+}
+
 void move_bullets(game *g){
     bullet* prev = g->root_b;
     bullet* current = g->root_b->next;

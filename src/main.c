@@ -256,6 +256,7 @@ int main(){
 
         // display game over screen
         if(!running){
+            deactivate_all_bullets(g->root_b);
             wmove(board, 1, 1);
             wprintw(board, "Game over.");
             wmove(board, 2, 1);
