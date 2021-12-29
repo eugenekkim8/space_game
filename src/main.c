@@ -49,7 +49,6 @@ game *game_init(){
     obj->level = 1;
     obj->base_lives = BASE_LIVES;
     obj->root_b = malloc(sizeof(bullet));
-    obj->root_b->active = 0;
     for (int j = 0; j < MAX_ENEMIES; j++){
         obj->enemies[j].active = 0;
     }
@@ -236,8 +235,10 @@ int main(){
                 create_bullet(g, B_RIGHT, g->ship.x + 1, g->ship.y, PLAYER_BULLET_SPEED);
                 break;
             case 'n': // cheat code, for testing!
-                g->level++;
-                g->score+=POINTS_PER_LEVEL; 
+                if(g->level < MAX_LEVEL){
+                    g->level++;
+                    g->score+=POINTS_PER_LEVEL; 
+                }
                 break;
             default:
                 move = NONE;

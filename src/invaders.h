@@ -44,7 +44,6 @@ typedef struct bullet bullet;
 
 struct bullet {
     bullet_direction direction;
-    int active;     // 0 = inactive, 1 = active
     int x, y;
     int b_speed;
     bullet* next; 

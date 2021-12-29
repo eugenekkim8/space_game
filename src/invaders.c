@@ -41,7 +41,6 @@ void move_bullets(game *g){
     bullet* prev = g->root_b;
     bullet* current = g->root_b->next;
     while(current != 0){
-        counter++;
         switch(current->direction){
             case B_LEFT:
                 current->x -= current->b_speed;
@@ -91,7 +90,6 @@ void move_enemies(game *g){
 void create_bullet(game *g, bullet_direction dir, int x, int y, int speed){
     bullet *new_bullet = malloc(sizeof(bullet));
 
-    new_bullet->active = 1;
     new_bullet->direction = dir;
     new_bullet->x = x;
     new_bullet->y = y;
