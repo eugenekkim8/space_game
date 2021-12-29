@@ -26,21 +26,35 @@ void move_player(game *g, player_move move){
     ship->y = MIN(MAX(1, ship->y), ROWS-2);
 }
 
+bullet *deactivate_bullet(bullet *prev, bullet *current){
+
+    // returns current->next
+
+    bullet* temp = current;
+    prev->next = current->next;
+    current = current->next;
+    free(temp);
+    return current;
+}
+
 void move_bullets(game *g){
-    for(int i = 0; i < MAX_BULLETS; i++){
-        if(g->bullets[i].active == 1){
-            bullet *current = &g->bullets[i];
-            switch(current->direction){
-                case B_LEFT:
-                    current->x -= current->b_speed;
-                    break;
-                case B_RIGHT:
-                    current->x += current->b_speed;
-                    break;
-            }
-            if(current->x < 1 || current->x > COLS-2){
-                current->active = 0;
-            }
+    bullet* prev = g->root_b;
+    bullet* current = g->root_b->next;
+    while(current != 0){
+        counter++;
+        switch(current->direction){
+            case B_LEFT:
+                current->x -= current->b_speed;
+                break;
+            case B_RIGHT:
+                current->x += current->b_speed;
+                break;
+        }
+        if(current->x < 1 || current->x > COLS-2){
+            current = deactivate_bullet(prev, current);
+        } else{
+            prev = prev->next;
+            current = current->next;
         }
     }
 }
@@ -75,18 +89,18 @@ void move_enemies(game *g){
 
 
 void create_bullet(game *g, bullet_direction dir, int x, int y, int speed){
-    for(int i = 0; i < MAX_BULLETS; i++){
-        if(g->bullets[i].active == 0){
-            bullet *new_bullet = &g->bullets[i];
+    bullet *new_bullet = malloc(sizeof(bullet));
 
-            new_bullet->active = 1;
-            new_bullet->direction = dir;
-            new_bullet->x = x;
-            new_bullet->y = y;
-            new_bullet->b_speed = speed;
-            return;
-        }
-    }
+    new_bullet->active = 1;
+    new_bullet->direction = dir;
+    new_bullet->x = x;
+    new_bullet->y = y;
+    new_bullet->b_speed = speed;
+    new_bullet->next = g->root_b->next; // linked list insertion
+
+    g->root_b->next = new_bullet;
+
+    return;
 }
 
 void create_enemy(game *g, int x, int y, int b_rate, int b_speed, int x_speed, int y_rate, 
@@ -127,63 +141,72 @@ void check_collisions(game *g){
     int player_x = g->ship.x;
     int player_y = g->ship.y;
 
-    // for each bullet
-    for(int i = 0; i < MAX_BULLETS; i++){
-        if(g->bullets[i].active == 1){
-            bullet *current = &g->bullets[i];
-            int bullet_x = current->x;
-            int bullet_y = current->y;
+    bullet* prev = g->root_b;
+    bullet* current = g->root_b->next;
+    int deactivate = 0;
 
-            // collision with enemy?
-            if(current->direction == B_RIGHT){ // no friendly fire
-                for(int i = 0; i < MAX_ENEMIES; i++){
-                    if(g->enemies[i].active == 1){
-                        int enemy_x = g->enemies[i].x;
-                        int enemy_y = g->enemies[i].y;
-                        if ((enemy_y == bullet_y) && (abs(enemy_x - bullet_x) <= 
-                            (current->b_speed + g->enemies[i].x_speed) / 2.0)){
-                            
-                            // deactivate bullet and enemy
-                            g->enemies[i].active = 0;
-                            current->active = 0;
+    while(current){
+        int bullet_x = current->x;
+        int bullet_y = current->y;
 
-                            // increment score
-                            g->score += POINTS_PER_ENEMY;
-                        }
-                    }
-                }
-            }
-
-            // collision with boss?
-            if(current->direction == B_RIGHT && g->boss.active == 1){
-                if((abs(g->boss.x - bullet_x) <= current->b_speed / 2.0) &&
-                    ((bullet_y >= g->boss.y) && (bullet_y <= g->boss.y + g->boss.height - 1))){
-                        // deactivate bullet, take one life off boss
-                        current->active = 0;
-                        g->boss.lives--;
-
-                        // if boss is dead, deactivate and increment score
-                        if(g->boss.lives <= 0){
-                            g->boss.active = 0;
-                            g->score += POINTS_PER_BIGENEMY;
-                        }
-                    }
-            }
-
-            // collision with player
-            if(current->direction == B_LEFT){
-                if ((player_y == bullet_y) && (abs(bullet_x - player_x) <= current->b_speed / 2.0)){
+        // collision with enemy?
+        if(current->direction == B_RIGHT){ // no friendly fire
+            for(int i = 0; i < MAX_ENEMIES; i++){
+                if(g->enemies[i].active == 1){
+                    int enemy_x = g->enemies[i].x;
+                    int enemy_y = g->enemies[i].y;
+                    if ((enemy_y == bullet_y) && (abs(enemy_x - bullet_x) <= 
+                        (current->b_speed + g->enemies[i].x_speed) / 2.0)){
                         
-                    // deactivate bullet
-                    current->active = 0;
+                        // deactivate bullet and enemy
+                        g->enemies[i].active = 0;
+                        deactivate = 1;
 
-                    // decrease lives
-                    g->ship.lives--;
+                        // increment score
+                        g->score += POINTS_PER_ENEMY;
+                    }
                 }
             }
-
         }
+
+        // collision with boss?
+        if(current->direction == B_RIGHT && g->boss.active == 1){
+            if((abs(g->boss.x - bullet_x) <= current->b_speed / 2.0) &&
+                ((bullet_y >= g->boss.y) && (bullet_y <= g->boss.y + g->boss.height - 1))){
+                    // deactivate bullet, take one life off boss
+                    deactivate = 1;
+                    g->boss.lives--;
+
+                    // if boss is dead, deactivate and increment score
+                    if(g->boss.lives <= 0){
+                        g->boss.active = 0;
+                        g->score += POINTS_PER_BIGENEMY;
+                    }
+                }
+        }
+
+        // collision with player
+        if(current->direction == B_LEFT){
+            if ((player_y == bullet_y) && (abs(bullet_x - player_x) <= current->b_speed / 2.0)){
+                    
+                // deactivate bullet
+                deactivate = 1;
+
+                // decrease lives
+                g->ship.lives--;
+            }
+        }
+
+        if(deactivate){
+            current = deactivate_bullet(prev, current);
+        } else{
+            prev = prev->next;
+            current = current->next;
+        }
+        
     }
+
+    
 
     // for each enemy
     for(int i = 0; i < MAX_ENEMIES; i++){

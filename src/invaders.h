@@ -9,7 +9,6 @@
 #define ROWS 16
 #define COLS 72
 
-#define MAX_BULLETS 100
 #define MAX_ENEMIES 10
 
 #define FRAME_RATE 70
@@ -41,12 +40,15 @@ typedef struct {
     int lives;
 } player;
 
-typedef struct {
+typedef struct bullet bullet;
+
+struct bullet {
     bullet_direction direction;
     int active;     // 0 = inactive, 1 = active
     int x, y;
     int b_speed;
-} bullet;
+    bullet* next; 
+};
 
 typedef struct{
     int active;
@@ -58,6 +60,7 @@ typedef struct{
     int period;
     char symbol;
     int birth_frame;
+    struct enemy* next;
 } enemy;
 
 typedef struct {
@@ -74,7 +77,7 @@ typedef struct {
     int rows, cols;
     int score;
     player ship;
-    bullet bullets[MAX_BULLETS];
+    bullet* root_b;
     enemy enemies[MAX_ENEMIES];
     bigenemy boss;  
     int n_frame;

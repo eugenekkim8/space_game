@@ -48,9 +48,8 @@ game *game_init(){
     obj->n_frame = 0;
     obj->level = 1;
     obj->base_lives = BASE_LIVES;
-    for (int i = 0; i < MAX_BULLETS; i++){
-        obj->bullets[i].active = 0;
-    }
+    obj->root_b = malloc(sizeof(bullet));
+    obj->root_b->active = 0;
     for (int j = 0; j < MAX_ENEMIES; j++){
         obj->enemies[j].active = 0;
     }
@@ -82,12 +81,10 @@ void display_board(WINDOW *w, game *g){
     }
 
     // display bullets
-    for(int i = 0; i < MAX_BULLETS; i++){
-        if(g->bullets[i].active == 0){
-            continue;
-        }
-        wmove(w, g->bullets[i].y, g->bullets[i].x);
-        switch(g->bullets[i].direction){
+    bullet *current = g->root_b->next;
+    while(current){
+        wmove(w, current->y, current->x);
+        switch(current->direction){
             case B_LEFT:
                 wprintw(w, LEFT_BULLET);
                 break;
@@ -95,6 +92,7 @@ void display_board(WINDOW *w, game *g){
                 wprintw(w, RIGHT_BULLET);
                 break;
         }
+        current = current->next;
     }
 
     // display enemies
