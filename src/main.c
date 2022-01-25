@@ -39,6 +39,32 @@ bigenemy *boss_init(){
     return obj;
 }
 
+bullet *dummy_bullet(){
+    bullet *b = malloc(sizeof(bullet));
+    b->x = 0;
+    b->y = 0;
+    b->direction = B_RIGHT;
+    b->b_speed = 0;
+    b->next = 0;
+    return b;
+}
+
+enemy *dummy_enemy(){
+    enemy *e = malloc(sizeof(enemy));
+    e->x = 0;
+    e->y = 0;
+    e->b_rate = 0;
+    e->b_speed = 0;
+    e->x_speed = 0;
+    e->y_rate = 0;
+    e->period = 0;
+    e->symbol = ' ';
+    e->birth_frame = 0;
+    e->next = 0;
+    return e;
+
+}
+
 game *game_init(){
     game *obj = malloc(sizeof(game));
     obj->rows = ROWS;
@@ -48,12 +74,19 @@ game *game_init(){
     obj->n_frame = 0;
     obj->level = 1;
     obj->base_lives = BASE_LIVES;
-    obj->root_b = malloc(sizeof(bullet));
-    for (int j = 0; j < MAX_ENEMIES; j++){
-        obj->enemies[j].active = 0;
-    }
+    obj->root_b = dummy_bullet();
+    obj->root_e = dummy_enemy();
     obj->boss = *boss_init();
     return obj;
+}
+
+void game_close(game *g){
+    deactivate_all_bullets(g->root_b);
+    deactivate_all_enemies(g->root_e);
+    free(g->root_b);
+    free(g->root_e);
+    free(g);
+    return;
 }
 
 void display_board(WINDOW *w, game *g){
@@ -81,7 +114,7 @@ void display_board(WINDOW *w, game *g){
 
     // display bullets
     bullet *current = g->root_b->next;
-    while(current){
+    while(current != 0){
         wmove(w, current->y, current->x);
         switch(current->direction){
             case B_LEFT:
@@ -92,25 +125,37 @@ void display_board(WINDOW *w, game *g){
                 break;
         }
         current = current->next;
-    }
+    }    
+
 
     // display enemies
-    for(int i = 0; i < MAX_ENEMIES; i++){
-        if(g->enemies[i].active == 0){
-            continue;
-        }
-        wmove(w, g->enemies[i].y, g->enemies[i].x);
-        wprintw(w, &g->enemies[i].symbol);
-    }
+    enemy *this_enemy = g->root_e->next;
+    while(this_enemy != 0){
+        wmove(w, this_enemy->y, this_enemy->x);
+        wprintw(w, "%c", this_enemy->symbol);
+        this_enemy = this_enemy->next;
+    } 
+    
 
     wnoutrefresh(w);
 }
+
+// int display_list(enemy* e){
+//     int result = 0;
+//     while (e != 0){
+//         result += e->x;
+//         e = e->next;
+//     }
+//     return result;
+// }
 
 void display_score(WINDOW *w, game *g){
     wclear(w);
     wprintw(w, " Score: %d", g->score);
     wmove(w, 1, 0);
     wprintw(w, " Level: %d", g->level);
+    // wmove(w, 2, 0);
+    // wprintw(w, " Debug: %d", display_list(g->root_e));
     wmove(w, 0, 18);
     wprintw(w, " Ship Lives: (%02d) ", MAX(g->ship.lives, 0));
     for(int i = 0; i < g->ship.lives; i++)
@@ -256,7 +301,6 @@ int main(){
 
         // display game over screen
         if(!running){
-            deactivate_all_bullets(g->root_b);
             wmove(board, 1, 1);
             wprintw(board, "Game over.");
             wmove(board, 2, 1);
@@ -267,11 +311,13 @@ int main(){
             while(1){
                 char x = getch();
                 if(x == 'p'){
+                    game_close(g);
                     g = game_init();
                     timeout(0);
                     running = true;
                     break;
                 } else if(x == 'q'){
+                    game_close(g);
                     break;
                 }
             } 

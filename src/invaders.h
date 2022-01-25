@@ -9,8 +9,6 @@
 #define ROWS 16
 #define COLS 72
 
-#define MAX_ENEMIES 10
-
 #define FRAME_RATE 70
 
 #define PLAYER_LIVES 3
@@ -49,8 +47,9 @@ struct bullet {
     bullet* next; 
 };
 
-typedef struct{
-    int active;
+typedef struct enemy enemy;
+
+struct enemy {
     int x, y;
     int b_rate;
     int b_speed;
@@ -59,8 +58,8 @@ typedef struct{
     int period;
     char symbol;
     int birth_frame;
-    struct enemy* next;
-} enemy;
+    enemy* next;
+};
 
 typedef struct {
     int active;
@@ -77,7 +76,7 @@ typedef struct {
     int score;
     player ship;
     bullet* root_b;
-    enemy enemies[MAX_ENEMIES];
+    enemy* root_e;
     bigenemy boss;  
     int n_frame;
     int base_lives;
@@ -100,6 +99,7 @@ extern char *BOSS_FILE_LOC[MAX_LEVEL-1];
 
 void move_player(game *g, player_move move);
 void deactivate_all_bullets(bullet *root);
+void deactivate_all_enemies(enemy *root);
 void move_bullets(game *g);
 void move_enemies(game *g);
 void create_bullet(game *g, bullet_direction dir, int x, int y, int speed);
